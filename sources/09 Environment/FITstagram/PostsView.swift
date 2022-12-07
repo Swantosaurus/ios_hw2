@@ -39,19 +39,40 @@ struct PostsView: View {
                             await fetchPosts()
                         }
                 } else {
-                    ScrollView {
-                        LazyVGrid(columns: [GridItem()]) {
-                            ForEach(posts) { post in
-                                PostView(
-                                    post: post,
-                                    onCommentsButtonTap: {
-                                        path.append(post)
-                                    }
-                                )
+                    ZStack {
+                        ScrollView {
+                            LazyVGrid(columns: [GridItem()]) {
+                                ForEach(posts) { post in
+                                    PostView(
+                                        post: post,
+                                        onCommentsButtonTap: {
+                                            path.append(post)
+                                        }
+                                    )
                                     .onTapGesture {
                                         path.append(post)
                                     }
+                                }
                             }
+                        }
+                        .overlay{
+                            HStack {
+                                Spacer()
+                                VStack {
+                                    Spacer()
+                                    Button(action: {
+                                        path.append(AddPost())
+                                    }) {
+                                        Image(systemName: "plus")
+                                            .foregroundColor(.white)
+                                            .font(.system(size: 24))
+                                            .frame(width: 44, height: 44)
+                                            .background(Color.blue)
+                                            .cornerRadius(22)
+                                    }
+                                }
+                            }
+                            .padding(42)
                         }
                     }
                 }
@@ -63,8 +84,12 @@ struct PostsView: View {
                 Text("\(integer)")
             }
             .navigationDestination(for: Post.self) { post in
-                CommentsView(viewModel: CommentsViewModel(postID: post.id))
-//                PostDetailView(viewModel: PostDetailViewModel(postID: post.id))
+ //               CommentsView(viewModel: CommentsViewModel(postID: post.id))
+                PostDetailView(viewModel: PostDetailViewModel(postID: post.id))
+            }
+            .navigationDestination(for: AddPost.self){ addPost in
+                AddPostView(addPostViewModel: AddPostViewModel(),
+                            posts: $posts)
             }
             .navigationTitle("FITstagram")
             .navigationBarTitleDisplayMode(.inline)
@@ -83,6 +108,11 @@ struct PostsView: View {
         }
     }
 }
+
+/**
+    just for navigation to add post screen
+ */
+struct AddPost: Hashable{}
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {

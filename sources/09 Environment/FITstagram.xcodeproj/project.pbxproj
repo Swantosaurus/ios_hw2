@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6721E0A7293FA2EB00CB98D9 /* AddPostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6721E0A6293FA2EB00CB98D9 /* AddPostViewModel.swift */; };
+		6721E0AD293FA3F300CB98D9 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6721E0AC293FA3F300CB98D9 /* ImageUtils.swift */; };
+		6721E0AF293FC44200CB98D9 /* AddPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6721E0AE293FC44200CB98D9 /* AddPostView.swift */; };
+		6721E0B12940C38700CB98D9 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6721E0B02940C38700CB98D9 /* ImagePicker.swift */; };
+		6721E0B42940E10500CB98D9 /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6721E0B32940E10500CB98D9 /* ImageData.swift */; };
 		781F5130290041510070E0D0 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781F512F290041510070E0D0 /* Comment.swift */; };
 		781F5132290041DB0070E0D0 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781F5131290041DB0070E0D0 /* CommentsView.swift */; };
 		781F5134290048770070E0D0 /* NewCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781F5133290048770070E0D0 /* NewCommentView.swift */; };
@@ -27,6 +32,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6721E0A6293FA2EB00CB98D9 /* AddPostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPostViewModel.swift; sourceTree = "<group>"; };
+		6721E0AC293FA3F300CB98D9 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
+		6721E0AE293FC44200CB98D9 /* AddPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPostView.swift; sourceTree = "<group>"; };
+		6721E0B02940C38700CB98D9 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		6721E0B32940E10500CB98D9 /* ImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
 		781F512F290041510070E0D0 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		781F5131290041DB0070E0D0 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		781F5133290048770070E0D0 /* NewCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCommentView.swift; sourceTree = "<group>"; };
@@ -58,6 +68,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6721E0A3293FA28800CB98D9 /* AddPost */ = {
+			isa = PBXGroup;
+			children = (
+				6721E0B22940E0EA00CB98D9 /* Model */,
+				6721E0A4293FA29B00CB98D9 /* Presentation */,
+			);
+			path = AddPost;
+			sourceTree = "<group>";
+		};
+		6721E0A4293FA29B00CB98D9 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				6721E0A6293FA2EB00CB98D9 /* AddPostViewModel.swift */,
+				6721E0AE293FC44200CB98D9 /* AddPostView.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		6721E0A8293FA39600CB98D9 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				6721E0AA293FA3D100CB98D9 /* Utils */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		6721E0AA293FA3D100CB98D9 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6721E0AC293FA3F300CB98D9 /* ImageUtils.swift */,
+				6721E0B02940C38700CB98D9 /* ImagePicker.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		6721E0B22940E0EA00CB98D9 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6721E0B32940E10500CB98D9 /* ImageData.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		7845E3C7291C0C9700B68288 /* Comments */ = {
 			isa = PBXGroup;
 			children = (
@@ -98,6 +151,8 @@
 		789FBB2928F7053400951950 /* FITstagram */ = {
 			isa = PBXGroup;
 			children = (
+				6721E0A8293FA39600CB98D9 /* Shared */,
+				6721E0A3293FA28800CB98D9 /* AddPost */,
 				7845E3C7291C0C9700B68288 /* Comments */,
 				788111152901A683003D5B46 /* Model */,
 				789FBB2A28F7053400951950 /* FITstagramApp.swift */,
@@ -199,12 +254,17 @@
 				789FBB3928F7091C00951950 /* Post.swift in Sources */,
 				A315359C290982380086C161 /* RemoteImage.swift in Sources */,
 				A312D8ED292E725F00343DC8 /* PostDetailView.swift in Sources */,
+				6721E0B42940E10500CB98D9 /* ImageData.swift in Sources */,
+				6721E0B12940C38700CB98D9 /* ImagePicker.swift in Sources */,
 				781F51362900529D0070E0D0 /* PostsView.swift in Sources */,
 				7845E3CB291C0F0600B68288 /* CommentsContentView.swift in Sources */,
 				781F5132290041DB0070E0D0 /* CommentsView.swift in Sources */,
 				781F5134290048770070E0D0 /* NewCommentView.swift in Sources */,
 				789FBB2D28F7053400951950 /* ContentView.swift in Sources */,
+				6721E0AF293FC44200CB98D9 /* AddPostView.swift in Sources */,
+				6721E0A7293FA2EB00CB98D9 /* AddPostViewModel.swift in Sources */,
 				789FBB3B28F7126600951950 /* PostView.swift in Sources */,
+				6721E0AD293FA3F300CB98D9 /* ImageUtils.swift in Sources */,
 				7845E3C6291C0C8500B68288 /* CommentsScreenState.swift in Sources */,
 				789FBB2B28F7053400951950 /* FITstagramApp.swift in Sources */,
 			);
