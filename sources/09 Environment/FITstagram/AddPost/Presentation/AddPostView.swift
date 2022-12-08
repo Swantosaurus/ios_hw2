@@ -14,6 +14,7 @@ struct AddPostView: View {
     @State var isImagePickerPresented = false
     @State var sourceType: UIImagePickerController.SourceType = .photoLibrary
     @Binding var posts: [Post]
+    @Binding var newPost: Post?
     
     var body: some View {
         switch addPostViewModel.uploadState {
@@ -27,6 +28,7 @@ struct AddPostView: View {
         case let .Succes(post):
             Text("Finished with success 🥳")
             Button("Return back"){
+                newPost = post
                 posts.insert(post, at: 0)
                 dismiss()
             }.padding(30)
@@ -139,9 +141,10 @@ struct AddPostView: View {
 
 struct AddImageView_Previews: PreviewProvider {
     @State static var posts: [Post] = []
-
+    @State static var newPost: Post? = nil
+    
     static var previews: some View {
-        AddPostView(addPostViewModel: AddPostViewModel(), posts: $posts)
+        AddPostView(addPostViewModel: AddPostViewModel(), posts: $posts, newPost: $newPost)
     }
 }
 

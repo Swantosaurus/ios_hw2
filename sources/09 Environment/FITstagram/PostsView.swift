@@ -28,8 +28,10 @@ struct PostsView: View {
     @State var posts: [Post] = []
     
     @State var path = NavigationPath()
+    @State var newPost : Post? = nil
     
     var body: some View {
+        
         NavigationStack(path: $path) {
             Group {
                 if posts.isEmpty {
@@ -38,41 +40,18 @@ struct PostsView: View {
                         .task {
                             await fetchPosts()
                         }
+                        
                 } else {
                     ZStack {
-                        ScrollView {
-                            LazyVGrid(columns: [GridItem()]) {
-                                ForEach(posts) { post in
-                                    PostView(
-                                        post: post,
-                                        onCommentsButtonTap: {
-                                            path.append(post)
-                                        }
-                                    )
-                                    .onTapGesture {
-                                        path.append(post)
-                                    }
+                        ScrollViewReader { scroller in
+                            scrollView
+                                .overlay{
+                                    addNewPostFloatingButton
+                                        
                                 }
-                            }
-                        }
-                        .overlay{
-                            HStack {
-                                Spacer()
-                                VStack {
-                                    Spacer()
-                                    Button(action: {
-                                        path.append(AddPost())
-                                    }) {
-                                        Image(systemName: "plus")
-                                            .foregroundColor(.white)
-                                            .font(.system(size: 24))
-                                            .frame(width: 44, height: 44)
-                                            .background(Color.blue)
-                                            .cornerRadius(22)
-                                    }
+                                .overlay{
+                                    scrollToNewPost(scroller: scroller)
                                 }
-                            }
-                            .padding(42)
                         }
                     }
                 }
@@ -84,22 +63,86 @@ struct PostsView: View {
                 Text("\(integer)")
             }
             .navigationDestination(for: Post.self) { post in
- //               CommentsView(viewModel: CommentsViewModel(postID: post.id))
+                //               CommentsView(viewModel: CommentsViewModel(postID: post.id))
                 PostDetailView(viewModel: PostDetailViewModel(postID: post.id))
             }
             .navigationDestination(for: AddPost.self){ addPost in
                 AddPostView(addPostViewModel: AddPostViewModel(),
-                            posts: $posts)
+                            posts: $posts, newPost: $newPost)
             }
             .navigationTitle("FITstagram")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
 
+    
+    private func scrollToNewPost(scroller: ScrollViewProxy) -> some View {
+        HStack {
+            if(newPost != nil){
+                Spacer()
+                VStack {
+                    Button(action: {
+                        scroller.scrollTo(newPost)
+                        newPost = nil
+                    }) {
+                        Image(systemName: "doc")
+                            .foregroundColor(.white)
+                            .font(.system(size: 24))
+                            .frame(width: 44, height: 44)
+                            .background(Color.green)
+                            .cornerRadius(22)
+                    }
+                    Spacer()
+                }
+                .task(waitFiveSec)
+            }
+        }
+        .padding(42)
+    }
+    
+    private var scrollView: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem()]) {
+                ForEach(posts) { post in
+                    PostView(
+                        post: post,
+                        onCommentsButtonTap: {
+                            path.append(post)
+                        }
+                    )
+                    .id(post)
+                    .onTapGesture {
+                        path.append(post)
+                    }
+                }
+            }
+        }
+    }
+    
+    private var addNewPostFloatingButton: some View {
+        HStack {
+            Spacer()
+            VStack {
+                Spacer()
+                Button(action: {
+                    path.append(AddPost())
+                }) {
+                    Image(systemName: "plus")
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                        .frame(width: 44, height: 44)
+                        .background(Color.blue)
+                        .cornerRadius(22)
+                }
+            }
+        }
+        .padding(42)
+    }
+        
     private func fetchPosts() async {
         var request = URLRequest(url: URL(string: "https://fitstagram.ackee.cz/api/feed/")!)
         request.httpMethod = "GET"
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             self.posts = try JSONDecoder().decode([Post].self, from: data)
@@ -107,7 +150,20 @@ struct PostsView: View {
             print("[ERROR]", error)
         }
     }
+    
+    @Sendable
+    private func waitFiveSec() async {
+        do {
+            
+            try await Task.sleep(for: .seconds(5))
+        }
+        catch {
+            print("try Error", error.localizedDescription)
+        }
+        newPost = nil
+    }
 }
+
 
 /**
     just for navigation to add post screen
