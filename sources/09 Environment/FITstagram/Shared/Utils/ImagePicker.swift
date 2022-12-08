@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+/**
+ open imagePicker or camera to take picture and than closes it self (change isPresented binding)
+ 
+@param sendImage - is an closer that is called with the image that we got
+@param sourceType - opens different modes of image picker refers to  UIImagePickerController.SourceType (.photoLibrary, .camera)
+ */
+
 struct ImagePickerUIImageSender: UIViewControllerRepresentable {
     let sendImage: (UIImage) -> Void
     @Binding var isPresented: Bool
@@ -58,6 +65,10 @@ struct ImagePickerUIImageSender: UIViewControllerRepresentable {
     }
 }
 
+
+/**
+ joinked from Luky <3
+ */
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?

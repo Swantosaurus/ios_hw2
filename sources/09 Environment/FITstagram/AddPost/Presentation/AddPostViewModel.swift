@@ -12,10 +12,11 @@ class AddPostViewModel: ObservableObject {
     @Published private(set) var imageState = ImageState.NotSet
     @Published var author = ""
     @Published private(set) var uploadState : UploadState = UploadState.NotSent
+    @Published var text = ""
     
     
     @MainActor
-    func sendPost(text: String) async {
+    func sendPost() async {
         if case .NotSet = imageState {
             uploadState = .Error("images cannot be empty")
             return
@@ -23,14 +24,11 @@ class AddPostViewModel: ObservableObject {
         
         uploadState = .Loading
         
-        
-        var request = URLRequest(url: URL(string: "https://fitstagram.ackee.cz/api/feed")!)
-        request.httpMethod = "POST"
-        request.timeoutInterval = 5
-        request.setValue(author, forHTTPHeaderField: "Authorization")
-        
+        var request = insertRequestSetup()
+                
         do {
-            request.httpBody = try JSONEncoder().encode(ImageData(text: text, photos: prepareImages()))
+            request.httpBody =
+                try JSONEncoder().encode(ImageData(text: text, photos: prepareImages()))
         } catch {
             print("json envoding Error", error.localizedDescription)
         }
@@ -38,27 +36,45 @@ class AddPostViewModel: ObservableObject {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
 
-            if let httpresponse = response as? HTTPURLResponse {
-                switch httpresponse.statusCode {
-                case 500..<1000:
-                    uploadState = .Error("server is on fire 🔥 call the 🚒")
-                case 300..<500:
-                    uploadState = .Error("unexpected API usage - you should check your data 🧐")
-                case 200..<300:
-                    do {
-                        uploadState = .Succes(try JSONDecoder().decode(Post.self, from: data))
-                    } catch {
-                        uploadState = .Error("Error decoding Server Json after successfull request (got 200)")
-                    }
-                default:
-                    uploadState = .Error("I dont even know what happnd here 🤪")
-                }
+            if let httpResponse = response as? HTTPURLResponse {
+               handleResponseCode(response: httpResponse, data: data)
             } else {
+                uploadState = .Error("HUH error number xd this shouldnt happen")
                 print("Couldnt convert server response to HTTPURLResponse")
             }
         } catch {
             uploadState = .Error("🤖 Beep Boop, There was error connection fitstagram API, Beep Boop")
-            print("Conectiong API error", error)
+            print("Conectiong API error", error.localizedDescription)
+        }
+    }
+    
+    private func insertRequestSetup() -> URLRequest {
+        var request = URLRequest(url: URL(string: "https://fitstagram.ackee.cz/api/feed")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue(author, forHTTPHeaderField: "Authorization")
+        return request
+    }
+    
+    
+    /**
+     handles request with stats code
+     */
+    private func handleResponseCode(response : HTTPURLResponse, data: Data){
+        switch response.statusCode {
+        case 500..<1000:
+            uploadState = .Error("server is on fire 🔥 call the 🚒")
+        case 300..<500:
+            uploadState = .Error("unexpected API usage - you should check your data 🧐")
+        case 200..<300:
+            do {
+                uploadState = .Succes(try JSONDecoder().decode(Post.self, from: data))
+            } catch {
+                uploadState = .Error("Error decoding Server Json after successfull request (got 200)")
+                print("Error decoding Server Json", error.localizedDescription)
+            }
+        default:
+            uploadState = .Error("I dont even know what happnd here 🤪")
         }
     }
     
@@ -126,6 +142,7 @@ class AddPostViewModel: ObservableObject {
         imageState = .NotSet
         author = ""
         uploadState = .NotSent
+        text = ""
     }
 }
 

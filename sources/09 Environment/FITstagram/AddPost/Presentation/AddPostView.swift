@@ -12,9 +12,7 @@ struct AddPostView: View {
 
     @StateObject var addPostViewModel : AddPostViewModel
     @State var isImagePickerPresented = false
-    //@State var username: String = ""
     @State var sourceType: UIImagePickerController.SourceType = .photoLibrary
-    @State var text: String = ""
     @Binding var posts: [Post]
     
     var body: some View {
@@ -42,68 +40,13 @@ struct AddPostView: View {
             ScrollView(.horizontal){
                 LazyHStack{
                     if case let .Selected(images) = addPostViewModel.imageState {
-                        ForEach(images.indices, id: \.self){ index in
-                            Image(uiImage: images[index])
-                                .resizable()
-                                .frame(width: 200, height: 200)
-                                .aspectRatio(contentMode: .fit)
-                                .overlay {
-                                    Button(action: {
-                                        do {
-                                            try addPostViewModel.removeImageAtIndex(index: index)
-                                        } catch {
-                                            print("error removing image at index: \(index)")
-                                        }
-                                    }) {
-                                        Image(systemName: "minus")
-                                            .foregroundColor(.white)
-                                            .font(.system(size: 24))
-                                            .frame(width: 42, height: 42)
-                                            .background(Color.red)
-                                            .cornerRadius(22)
-                                    }
-                                    .opacity(0.7)
-                                    .padding(30)
-                                }
-                        }
+                            Images(images: images)
                     }
                 }
                 .frame(height: 200)
             }
-            HStack {
-                Button(action: {
-                    sourceType = .photoLibrary
-                    isImagePickerPresented = true
-                }) {
-                    Image(systemName: "folder.badge.plus")
-                        .foregroundColor(.white)
-                        .font(.system(size: 24))
-                        .frame(width: 44, height: 44)
-                        .background(Color.blue)
-                        .cornerRadius(22)
-                }
-                Button(action: {
-                    sourceType = .camera
-                    isImagePickerPresented = true
-                }){
-                    Image(systemName: "camera")
-                        .foregroundColor(.white)
-                        .font(.system(size: 24))
-                        .frame(width: 44, height: 44)
-                        .background(Color.blue)
-                        .cornerRadius(22)
-                }
-            }
-            
-            VStack{
-                TextField("Username", text: $addPostViewModel.author)
-                TextEditor(text: $text).border(Color.gray, width: 1)
-                Button("Send Post") {
-                    Task {
-                        await addPostViewModel.sendPost(text: text)
-                    }
-                }
-            }.padding()
+            actionButtonsRow
+            textFiendsWithSbmitButton
         }
         .fullScreenCover(isPresented: $isImagePickerPresented){
             ImagePickerUIImageSender(
@@ -114,6 +57,83 @@ struct AddPostView: View {
                 sourceType: sourceType
             )
         }
+    }
+    
+    private var textFiendsWithSbmitButton: some View {
+        VStack{
+            TextField("Username", text: $addPostViewModel.author)
+        
+            TextEditor(text: $addPostViewModel.text)
+                .frame(minHeight: 42)
+                .fixedSize(horizontal: false, vertical: true)
+                .border(Color.gray, width: 1)
+            
+            Button("Send Post") {
+                Task {
+                    await addPostViewModel.sendPost()
+                }
+            }
+            Spacer()
+        }.padding()
+    }
+    
+    
+    private func Images(images: [UIImage]) -> some View{
+        ForEach(images.indices, id: \.self){ index in
+            Image(uiImage: images[index])
+                .resizable()
+                .frame(width: 200, height: 200)
+                .aspectRatio(contentMode: .fit)
+                .overlay {
+                    removeImageButton(index: index)
+                }
+        }
+    }
+    
+    private func removeImageButton(index: Int) -> some View {
+        Button(action: {
+            do {
+                try addPostViewModel.removeImageAtIndex(index: index)
+            } catch {
+                print("error removing image at index: \(index)")
+            }
+        }) {
+            Image(systemName: "minus")
+                .foregroundColor(.white)
+                .font(.system(size: 24))
+                .frame(width: 42, height: 42)
+                .background(Color.red)
+                .cornerRadius(22)
+        }
+        .opacity(0.7)
+    }
+    
+    private var actionButtonsRow: some View {
+        HStack {
+            Button(action: {
+                sourceType = .photoLibrary
+                isImagePickerPresented = true
+            }) {
+                Image(systemName: "folder.badge.plus")
+                    .foregroundColor(.white)
+                    .font(.system(size: 24))
+                    .frame(width: 44, height: 44)
+                    .background(Color.blue)
+                    .cornerRadius(22)
+            }
+            Button(action: {
+                sourceType = .camera
+                isImagePickerPresented = true
+            }){
+                Image(systemName: "camera")
+                    .foregroundColor(.white)
+                    .font(.system(size: 24))
+                    .frame(width: 44, height: 44)
+                    .background(Color.blue)
+                    .cornerRadius(22)
+            }
+        }
+        
     }
 }
 

@@ -2,8 +2,10 @@
 //  ImageUtils.swift
 //  FITstagram
 //
-//  Created by Václav Kobera on 06.12.2022.
+//  Joinked by Václav Kobera on 06.12.2022.
 //
+// Love you all <3
+
 
 import Foundation
 import SwiftUI
