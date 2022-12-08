@@ -68,7 +68,7 @@ struct PostsView: View {
             }
             .navigationDestination(for: AddPost.self){ addPost in
                 AddPostView(addPostViewModel: AddPostViewModel(),
-                            posts: $posts, newPost: $newPost)
+                            posts: $posts, newPost: $newPost, path: $path)
             }
             .navigationTitle("FITstagram")
             .navigationBarTitleDisplayMode(.inline)

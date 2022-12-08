@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct AddPostView: View {
-    @Environment(\.dismiss) var dismiss
-
     @StateObject var addPostViewModel : AddPostViewModel
     @State var isImagePickerPresented = false
     @State var sourceType: UIImagePickerController.SourceType = .photoLibrary
     @Binding var posts: [Post]
     @Binding var newPost: Post?
+    @Binding var path: NavigationPath
     
     var body: some View {
         switch addPostViewModel.uploadState {
@@ -26,14 +25,26 @@ struct AddPostView: View {
                 addPostViewModel.restart()
             }
         case let .Succes(post):
+            //Gotta read fast xd
             Text("Finished with success 🥳")
-            Button("Return back"){
-                newPost = post
-                posts.insert(post, at: 0)
-                dismiss()
-            }.padding(30)
+                .onAppear {
+                    Task {
+                        await waitOneSec()
+                        newPost = post
+                        posts.insert(post, at: 0)
+                        path.removeLast()
+                    }
+                }
         case .Loading:
             ProgressView()
+        }
+    }
+    
+    func waitOneSec() async {
+        do {
+            try await Task.sleep(for: .seconds(1))
+        }catch {
+            print("sleep error", error.localizedDescription)
         }
     }
     
@@ -142,9 +153,10 @@ struct AddPostView: View {
 struct AddImageView_Previews: PreviewProvider {
     @State static var posts: [Post] = []
     @State static var newPost: Post? = nil
+    @State static var path: NavigationPath = NavigationPath()
     
     static var previews: some View {
-        AddPostView(addPostViewModel: AddPostViewModel(), posts: $posts, newPost: $newPost)
+        AddPostView(addPostViewModel: AddPostViewModel(), posts: $posts, newPost: $newPost, path: $path)
     }
 }
 
